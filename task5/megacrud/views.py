@@ -2,9 +2,11 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User
 from .forms import UserLoginForm, UserRegisterForm, UserUpdateForm
+
 
 # Create your views here.
 
@@ -13,6 +15,7 @@ def index(request):
     return render(request, 'index.html')
 
 
+@csrf_exempt
 def login(request):
     if request.method == "POST":
         form = UserLoginForm(data=request.POST)
@@ -31,6 +34,7 @@ def login(request):
     return render(request, 'login.html', context)
 
 
+@csrf_exempt
 def register(request):
     if request.method == "POST":
         form = UserRegisterForm(data=request.POST)
@@ -56,6 +60,7 @@ def logout(request):
 
 
 @login_required
+@csrf_exempt
 def update(request):
     if request.method == "POST":
         # Инициализируем форму с данными из POST-запроса
@@ -73,7 +78,9 @@ def update(request):
     }
     return render(request, 'update.html', context)
 
+
 @login_required
+@csrf_exempt
 def delete(request):
     user = request.user
     user.delete()
